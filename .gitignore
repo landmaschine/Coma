@@ -1,0 +1,26 @@
+# Build Directories
+bin/
+bin-int/
+
+# Visual Studio cache and user files
+.vs/
+*.user
+*.suo
+*.ipch
+*.aps
+*.opensdf
+*.sdf
+*.cachefile
+*.db
+*.opendb
+
+# Compiled Object files
+*.pdb
+*.ilk
+*.obj
+*.idb
+*.tlog
+
+# OS Generated
+.DS_Store
+Thumbs.db

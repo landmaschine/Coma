@@ -18,7 +18,6 @@ IncludeDir["Glad"] = "vendor/Glad/include"
 
 group "Dependencies"
     -- Project for Glad
-    -- Assumes you have glad.c in vendor/Glad/src and headers in vendor/Glad/include
     project "Glad"
         location "vendor/Glad"
         kind "StaticLib"
@@ -30,9 +29,11 @@ group "Dependencies"
 
         files
         {
-            "vendor/Glad/include/glad/glad.h",
+            "vendor/Glad/include/glad/gl.h",
+            "vendor/Glad/include/glad/vulkan.h",
             "vendor/Glad/include/KHR/khrplatform.h",
-            "vendor/Glad/src/glad.c"
+            "vendor/Glad/src/gl.c",
+            "vendor/Glad/src/vulkan.c"
         }
 
         includedirs
@@ -51,6 +52,68 @@ group "Dependencies"
         filter "configurations:Dist"
             runtime "Release"
             optimize "on"
+
+    -- Project for GLFW
+    project "GLFW"
+        location "vendor/GLFW"
+        kind "StaticLib"
+        language "C"
+        staticruntime "on"
+
+        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+        includedirs
+        {
+            "vendor/GLFW/include"
+        }
+
+        files
+        {
+            "vendor/GLFW/include/GLFW/glfw3.h",
+            "vendor/GLFW/include/GLFW/glfw3native.h",
+            "vendor/GLFW/src/context.c",
+            "vendor/GLFW/src/init.c",
+            "vendor/GLFW/src/input.c",
+            "vendor/GLFW/src/monitor.c",
+            "vendor/GLFW/src/platform.c",
+            "vendor/GLFW/src/vulkan.c",
+            "vendor/GLFW/src/window.c",
+            "vendor/GLFW/src/egl_context.c",
+            "vendor/GLFW/src/osmesa_context.c",
+            "vendor/GLFW/src/null_init.c",
+            "vendor/GLFW/src/null_joystick.c",
+            "vendor/GLFW/src/null_monitor.c",
+            "vendor/GLFW/src/null_window.c"
+        }
+
+        filter "system:windows"
+            systemversion "latest"
+            defines { "_GLFW_WIN32", "_CRT_SECURE_NO_WARNINGS" }
+            files
+            {
+                "vendor/GLFW/src/win32_init.c",
+                "vendor/GLFW/src/win32_joystick.c",
+                "vendor/GLFW/src/win32_monitor.c",
+                "vendor/GLFW/src/win32_time.c",
+                "vendor/GLFW/src/win32_thread.c",
+                "vendor/GLFW/src/win32_window.c",
+                "vendor/GLFW/src/wgl_context.c",
+                "vendor/GLFW/src/win32_module.c"
+            }
+
+        filter "configurations:Debug"
+            runtime "Debug"
+            symbols "on"
+
+        filter "configurations:Release"
+            runtime "Release"
+            optimize "on"
+
+        filter "configurations:Dist"
+            runtime "Release"
+            optimize "on"
+
 group ""
 
 project "Coma"
@@ -78,23 +141,16 @@ project "Coma"
     links
     {
         "Glad",
-        "glfw3",
+        "GLFW",
         "opengl32.lib"
-    }
-
-    -- Assuming you have pre-built GLFW binaries in vendor/GLFW/lib
-    -- You might need to adjust this path depending on your VS version or build
-    libdirs
-    {
-        "vendor/GLFW/lib"
     }
 
     filter "system:windows"
         systemversion "latest"
         defines 
         { 
-            "COMA_PLATFORM_WINDOWS", 
-            "GLFW_INCLUDE_NONE" 
+            "COMA_PLATFORM_WINDOWS",
+            "GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"
